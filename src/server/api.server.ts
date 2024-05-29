@@ -1,0 +1,1 @@
+export const server = "https://api-dev.1xcapp.online/api/";
