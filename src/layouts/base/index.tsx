@@ -4,11 +4,17 @@ import {
   CircleUser,
   Home,
   LineChart,
+  Mail,
   Menu,
+  MessageSquare,
   Package,
   Package2,
+  Plus,
+  PlusCircle,
   Search,
+  Settings,
   ShoppingCart,
+  UserPlus,
   Users,
 } from "lucide-react"
 
@@ -24,17 +30,49 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Link, NavLink, Outlet } from "react-router-dom"
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom"
 import { ModeToggle } from "@/components/mode-toggle"
+import state from '../../valtio/store';
+import toast from "react-hot-toast"
+import { useSnapshot } from "valtio"
 
 export default function HomeLayout() {
+  const snap = useSnapshot(state)
+  const user = snap.userStore.user
+  const navigate = useNavigate()
+  const handleLogout = () => {
+
+    state.userStore.logout().then((res) => {
+      console.log("logout ", res)
+      if (res) {
+        toast.success("Logged out")
+        // navigate("/login")
+        window.location.href = "/login"
+      }
+    }).catch((err) => {
+      console.log("logout ", err)
+    })
+  }
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
 
@@ -52,36 +90,81 @@ export default function HomeLayout() {
           </div>
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <NavLink
-                to="/"
-                className={({ isActive, isPending }) =>
-                    isPending ? "pending" : isActive ? "flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary" : " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                  }
-                
-              >
-                <Home className="h-4 w-4" />
-                Dashboard
-              </NavLink>
+              {
+                user.roleId === 1 && (
+                  <>
+                    <NavLink
+                      to="/"
+                      className={({ isActive, isPending }) => isPending ? "pending" : isActive ? "flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary" : " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"}
 
-              <NavLink
-                to="/product"
-                className={({ isActive, isPending }) =>
-                    isPending ? "pending" : isActive ? "flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary" : " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-                  }
-              >
-                <Package className="h-4 w-4" />
-                Products{" "}
-              </NavLink>
+                    >
+                      <Home className="h-4 w-4" />
+                      Dashboard
+                    </NavLink>
+                    <NavLink
+                      to="/home"
+                      className={({ isActive, isPending }) => isPending ? "pending" : isActive ? "flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary" : " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"}
+                    >
+                      <Package className="h-4 w-4" />
+                      Products{" "}
+                    </NavLink>
+                    <Link
+                      to="#"
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                    >
+                      <Users className="h-4 w-4" />
+                      Etudiants
+                    </Link>
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="item-1" className="border-0">
+                        <AccordionTrigger className="hover:no-underline py-0">
+                          <h2
 
-              <Link
-                to="#"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Users className="h-4 w-4" />
-                Etudiants
-              </Link>
+                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all"
+                          >
+                            <Settings className="h-4 w-4" />
+                            Paramettres
+                          </h2>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="px-4">
+                            <Link
+                              to="roles"
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                            >
+                              <PlusCircle className="h-4 w-4" />
+                              Roles
+                            </Link>
+                            <Link
+                              to="#"
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                            >
+                              <PlusCircle className="h-4 w-4" />
+                              Matieres
+                            </Link>
+                            <Link
+                              to="#"
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                            >
+                              <PlusCircle className="h-4 w-4" />
+                              Filliers
+                            </Link>
+                            <Link
+                              to="#"
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                            >
+                              <PlusCircle className="h-4 w-4" />
+                              Niveau Filliers
+                            </Link>
+                          </div>
+                          
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </>
+                )
 
-             
+              }
             </nav>
           </div>
           <div className="mt-auto p-4">
@@ -119,51 +202,80 @@ export default function HomeLayout() {
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
               <nav className="grid gap-2 text-lg font-medium">
-                <Link
-                  to="#"
-                  className="flex items-center gap-2 text-lg font-semibold"
+                <NavLink
+                  to="/"
+                  className={({ isActive, isPending }) =>
+                    isPending ? "pending" : isActive ? "flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary" : " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  }
+
                 >
-                  <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Acme Inc</span>
-                </Link>
-                <Link
-                  to="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Home className="h-5 w-5" />
+                  <Home className="h-4 w-4" />
                   Dashboard
-                </Link>
+                </NavLink>
+
+                <NavLink
+                  to="/home"
+                  className={({ isActive, isPending }) =>
+                    isPending ? "pending" : isActive ? "flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary" : " flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                  }
+                >
+                  <Package className="h-4 w-4" />
+                  Products{" "}
+                </NavLink>
+
                 <Link
                   to="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
                 >
-                  <ShoppingCart className="h-5 w-5" />
-                  Orders
-                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    6
-                  </Badge>
+                  <Users className="h-4 w-4" />
+                  Etudiants
                 </Link>
-                <Link
-                  to="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Package className="h-5 w-5" />
-                  Products
-                </Link>
-                <Link
-                  to="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Users className="h-5 w-5" />
-                  Customers
-                </Link>
-                <Link
-                  to="#"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <LineChart className="h-5 w-5" />
-                  Analytics
-                </Link>
+                <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="item-1" className="border-0">
+                        <AccordionTrigger className="hover:no-underline py-0">
+                          <h2
+
+                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all"
+                          >
+                            <Settings className="h-4 w-4" />
+                            Paramettres
+                          </h2>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="px-4">
+                            <Link
+                              to="roles"
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                            >
+                              <PlusCircle className="h-4 w-4" />
+                              Roles
+                            </Link>
+                            <Link
+                              to="#"
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                            >
+                              <PlusCircle className="h-4 w-4" />
+                              Matieres
+                            </Link>
+                            <Link
+                              to="#"
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                            >
+                              <PlusCircle className="h-4 w-4" />
+                              Filliers
+                            </Link>
+                            <Link
+                              to="#"
+                              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+                            >
+                              <PlusCircle className="h-4 w-4" />
+                              Niveau Filliers
+                            </Link>
+                          </div>
+                          
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
               </nav>
               <div className="mt-auto">
                 <Card>
@@ -195,7 +307,7 @@ export default function HomeLayout() {
               </div>
             </form>
           </div>
-          <ModeToggle/>
+          <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
 
@@ -210,10 +322,11 @@ export default function HomeLayout() {
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link to="/login">Logout</Link>
+              <DropdownMenuItem onClick={handleLogout}>
+                Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
+
 
           </DropdownMenu>
         </header>

@@ -17,9 +17,8 @@ class CounterStore{
 
     async getPays(): Promise<ApiResponse>{
         const response = await this.authService.getPays();
-        const result = response.issues ;
+        const result = response ;
         console.log(result)
-        this.pays = result;
         return result;
     }
 }

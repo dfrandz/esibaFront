@@ -1,17 +1,16 @@
 export interface User {
     id: number;
-    name: string;
-    username: string;
+    nom: string;
+    prenom: string;
     email: string;
-    role_id: number;
-    country_id?: number;
-    franchise_id?: number;
-    devices?: any[];
+    domaine: string;
+    nationalite: string;
+    roleId: number;
     status?: string;
     role?: Role;
     created_at?: Date;
+    photoProfile: Blob;
 }
-
 
 export interface ApiNetwork {
     id: number;

@@ -9,6 +9,7 @@ import * as z from "zod";
 import { useSnapshot } from "valtio"
 import state from '../../valtio/store';
 import { BorderBeam } from "@/components/magicui/border-beam"
+import toast from "react-hot-toast";
 const Login = () => {
 
   const snap = useSnapshot(state);
@@ -32,9 +33,15 @@ const Login = () => {
     state.userStore.login(data).then((res)=>{
       console.log("res ", res)
       if (res?.success) {
-        navigate('/')
+        navigate("/")
+        toast.success("Logged in")    
+        // window.location.href = "/"
+
+      }else{
+        toast.error("Invalid credentials")
       }
     }).catch((error)=>{
+
       console.log("errpr ", error)
     })
   };
@@ -47,17 +54,17 @@ const Login = () => {
       <div className="bg-gray-500">
         {/* <div className="absolute pointer-events-none inset-0 flex items-center justify-center bg-black  [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div> */}
         <div className="flex items-center justify-center h-screen">
-          <div className="mx-auto grid w-[350px] gap-6 relative rounded-xl p-4 text-white border">
+          <div className="mx-auto grid w-[350px] gap-6 relative rounded-xl p-4  border">
             <div className="grid gap-2 text-center">
               <h1 className="text-3xl font-bold relative z-20 bg-clip-text ">Login</h1>
               <p className="text-balance  relative z-20 bg-clip-text">
                 Enter your email below to login to your account
               </p>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 relative z-20">
+            <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input className="relative "
+                <Input className=" "
                   id="email"
                   type="email"
                   placeholder="m@example.com"
@@ -98,7 +105,7 @@ const Login = () => {
                 Sign up
               </Link>
             </div>
-            <BorderBeam size={250} duration={12} delay={9} />
+            {/* <BorderBeam size={250} duration={12} delay={9} /> */}
           </div>
         </div>
       </div>

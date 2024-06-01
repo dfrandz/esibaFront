@@ -76,7 +76,39 @@ class UserStore {
         }
     }
     
+    async logout():Promise<ApiResponse | undefined> {
+        try {
+            const response = await this.authService.logout();
+            if (response?.success) {
+                this.isAuthenticated = false;
+                this.user = {} as User;
+                this.token = '';
+                localStorage.removeItem('authStoreState');
+                localStorage.removeItem('user');
+                localStorage.removeItem('token');
+                localStorage.removeItem('tokenExpiration');
+                return response
+            }else{
+                return {
+                    success: false,
+                    message: response?.message,
+                    result: [],
+                    errors: response?.errors
+                };
+            }
+        } catch (error: any) {
+            return {
+                success: false,
+                message: 'Erreur de connexion',
+                result: [],
+                errors: error,
+            };
+
+        }
+        
+    }
 }
+
 
 const  userStore= proxy(new UserStore());
 export default userStore;

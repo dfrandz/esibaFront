@@ -22,9 +22,6 @@ function AuthProvider({ children }: any) {
         setTimeout(()=>{
             setIsLoading(false);
         },2000)
-        setInterval(() => {
-            
-        }, 4000);
     }, []);
 
 

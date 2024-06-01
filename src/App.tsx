@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
-import { Accueil, Dashboard, HomeLayout, Login } from './routes/routes'
+import { Accueil, Dashboard, Home, HomeLayout, Login, Role } from './routes/routes'
 
 function App() {
 
@@ -9,7 +9,8 @@ function App() {
           <Routes>
               <Route path="/" element={<HomeLayout/>}>
                 <Route index element={<Dashboard/>}/>
-                <Route path='product' element={<Accueil/>}/>
+                <Route path='home' element={<Home/>}/>
+                <Route path='roles' element={<Role/>}/>
               </Route>
             <Route path='login' element={<Login/>}/>
 

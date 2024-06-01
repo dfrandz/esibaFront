@@ -34,7 +34,7 @@ export class AuthService {
             "password":  loginDto.password, 
         }
         try {
-            apiResponse = await postData('users/login',requestBody);
+            apiResponse = await postData('auth/login',requestBody);
             console.log("apiresponse ", apiResponse)
             if (apiResponse.success) {
                 return apiResponse
@@ -55,6 +55,33 @@ export class AuthService {
                 errors: "Erreur de connexion"
             };
         }
+    }
+
+    async logout(): Promise<ApiResponse>{
+        let apiResponse: ApiResponse;
+        try {
+            apiResponse = await getData('auth/logout');
+            console.log("apiresponse ", apiResponse)
+            if (apiResponse.success) {
+                return apiResponse
+            } else {
+            console.log("apiresponse ", apiResponse)
+                return {
+                    success: false,
+                    message: apiResponse.message,
+                    result: [],
+                    errors: apiResponse.errors
+                };
+            }
+        } catch (error) {
+            return {
+                success: false,
+                message: 'Erreur de connexion veuillez réessayer plus tard',
+                result: null,
+                errors: "Erreur de connexion"
+            };
+        }
+
     }
 
     async getPays(): Promise<ApiResponse>{

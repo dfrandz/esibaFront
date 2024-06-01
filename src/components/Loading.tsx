@@ -1,4 +1,4 @@
-// import logo from '/img/logo.png';
+import logo from '/assets/images/95.jpg';
 import '../index.css';
 
 function Loading({ isLoading, children }: any) {
@@ -6,9 +6,9 @@ function Loading({ isLoading, children }: any) {
     <div className="">
       {
         isLoading ?
-          <div className="tw-mx-auto tw-max-w-2xl md:tw-text-center">
-            <div className="tw-flex tw-items-center tw-justify-center tw-h-screen">
-              <img src="" width={"20%"} height={"100vh"} alt="Logo" className="tw-animate-bounce tw-text-center tw-max-w-full tw-h-auto tw-transition-all tw-ease-in-out" />
+          <div className="mx-auto max-w-2xl md:text-center">
+            <div className="flex items-center justify-center h-screen">
+              <img src={logo} width={"20%"} height={"100vh"} alt="Logo" className="animate-bounce text-center max-w-full h-auto transition-all ease-in-out" />
             </div>
           </div>
           :

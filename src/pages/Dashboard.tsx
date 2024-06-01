@@ -1,12 +1,28 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Activity, DollarSign } from "lucide-react"
-
+import { useSnapshot } from "valtio"
+import state from "../valtio/store"
+import { useQuery } from "@tanstack/react-query"
+import { useEffect } from "react"
 const Dashboard = () => {
+    const snap = useSnapshot(state)
+    const {data: user, isLoading, isSuccess} = useQuery({
+        queryKey: ["user"],
+        queryFn: () => {
+            return snap.userStore.user
+        }
+    })
+
+    console.log('isLoading', user)
+    console.log('isSuccess', isSuccess)
+
     return (
         <>
-            <div>Dashboard</div>
+
+            <div>Dashboard {user?.nom}</div>
 
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+
                 <Card className="">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>

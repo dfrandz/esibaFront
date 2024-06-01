@@ -12,6 +12,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import AuthProvider from './providers/AuthProvider.tsx'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider } from './components/theme/theme-provider.tsx'
+import { Toaster } from "react-hot-toast";
 const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -19,11 +20,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        {/* <AuthProvider> */}
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <AuthProvider>
           <App />
+          <Toaster />
+        </AuthProvider>
         </ThemeProvider>
-        {/* </AuthProvider> */}
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
       </Provider>
