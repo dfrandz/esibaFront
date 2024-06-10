@@ -23,7 +23,7 @@ class RoleStore {
                 const result = response.result;
                 this.role = result
                 console.log("this.role", this.role)
-                return response
+                return response.result
             }else{
                 return {
                     success: false,

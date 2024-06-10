@@ -34,9 +34,9 @@ const Login = () => {
     setLoading(true)
     state.userStore.login(data).then((res)=>{
       if (res?.success) {
-        navigate("/")
+        // navigate("/")
         toast.success("Logged in")    
-        // window.location.href = "/"
+        window.location.href = "/"
       }else{
         setLoading(false)
         toast.error(res.message)

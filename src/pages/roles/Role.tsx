@@ -32,11 +32,14 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Textarea } from "@/components/ui/textarea"
 import toast from "react-hot-toast"
+import { RoleDto } from "@/models"
+
 const Role = () => {
 
   const snap = useSnapshot(state)
   const queryClient = useQueryClient();
-  const { } = useQuery({
+
+  useQuery({
     queryKey: ["role"],
     queryFn: () => {
       return state.roleStore.getRoles()
@@ -47,22 +50,25 @@ const Role = () => {
     libelle: z.string().min(4, "Le libelle du role est obligatoire"),
     description: z.string().min(4, "La description du role est obligatoire"),
   });
-  
+
+  type RoleFormInputs = z.infer<typeof roleSchema>;
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm<RoleFormInputs>({
     resolver: zodResolver(roleSchema),
   });
   
-  type RoleFormInputs = z.infer<typeof roleSchema>;
 
   const addMutation = useMutation({
     mutationFn: (newData: RoleFormInputs) => state.roleStore.addRole(newData),
     onSuccess: () => {
       toast.success("Role ajouté avec succès");
-      // queryClient.invalidateQueries({ queryKey: ["role"] });
+      queryClient.invalidateQueries({ queryKey: ["role"] });
+      reset()
     },
     onError: () => {
       toast.error("Erreur lors de l'ajout du role");
@@ -85,9 +91,9 @@ const Role = () => {
   });
 
 
-  const handleAddRole = () => {
-    // addMutation.mutate(data);
-    console.log("add role")
+  const onSubmit = (data: RoleFormInputs) => {
+    console.log('data before send', data)
+    addMutation.mutate(data)
   };
 
   const handleDelete = (roleId: string) => {
@@ -141,12 +147,12 @@ const Role = () => {
           );
         },
       }),
-    ] as unknown as ColumnDef<any>[];
+    ] as unknown as ColumnDef<RoleDto>[];
   },[]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([])
-  const table = useReactTable({
-    data: [...(snap.roleStore.role ?? [])],
+  const table = useReactTable<RoleDto>({
+    data: snap.roleStore.role,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -269,40 +275,39 @@ const Role = () => {
           </div>
 
           <div>
-            <form onSubmit={handleSubmit(handleAddRole)}>
               <Card className="p-2">
-                <CardHeader>
-                  <CardTitle>
-                    Ajouter un Role
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid w-full max-w-sm items-center gap-1.5 my-1">
-                    <Label htmlFor="role">Role</Label>
-                    <Input type="texte" id="role" placeholder="role name" {...register("libelle")} />
-                    {errors.libelle && (
-                  <p className="text-red-500 text-sm">{errors.libelle.message}</p>
-                )}
-                  </div>
-                  <div className="grid w-full max-w-sm items-center gap-1.5 my-1">
-                    <Label htmlFor="role">Description</Label>
-                    <Textarea  id="role" placeholder="description" {...register("description")} />
-                    {errors.description && (
-                  <p className="text-red-500 text-sm">{errors.description.message}</p>
-                  )}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button size="sm" className="h-8 gap-1">
-                    <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Add Role
-                    </span>
-                  </Button>
-                  
-                </CardFooter>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <CardHeader>
+                      <CardTitle>
+                        Ajouter un Role
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid w-full max-w-sm items-center gap-1.5 my-1">
+                        <Label htmlFor="libelle">Role</Label>
+                        <Input type="text" placeholder="role name" {...register("libelle")} />
+                        {errors.libelle && (
+                      <p className="text-red-500 text-sm">{errors.libelle.message}</p>
+                    )}
+                      </div>
+                      <div className="grid w-full max-w-sm items-center gap-1.5 my-1">
+                        <Label htmlFor="description">Description</Label>
+                        <Textarea  placeholder="description" {...register("description")} />
+                        {errors.description && (
+                      <p className="text-red-500 text-sm">{errors.description.message}</p>
+                      )}
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button type="submit" size="sm" className="h-8 gap-1">
+                        <PlusCircle className="h-3.5 w-3.5" />
+                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                          Add Role
+                        </span>
+                      </Button>
+                    </CardFooter>
+                </form>
               </Card>
-            </form>
           </div>
         </div>
       </div>

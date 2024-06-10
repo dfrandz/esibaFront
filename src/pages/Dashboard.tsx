@@ -5,6 +5,7 @@ import state from "../valtio/store"
 import { useQuery } from "@tanstack/react-query"
 import { useEffect } from "react"
 const Dashboard = () => {
+
     const snap = useSnapshot(state)
     const {data: user, isLoading, isSuccess} = useQuery({
         queryKey: ["user"],
@@ -12,10 +13,11 @@ const Dashboard = () => {
             return snap.userStore.user
         }
     })
-
     console.log('isLoading', user)
     console.log('isSuccess', isSuccess)
-
+    useEffect( ()=>{
+        
+    },[])
     return (
         <>
 

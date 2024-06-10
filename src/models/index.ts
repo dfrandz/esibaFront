@@ -20,7 +20,7 @@ export interface ApiNetwork {
     created_at: Date;
 }
 
-export interface Role {
+export interface RoleDto {
     id: number;
     libelle: string;
     description?: string;
