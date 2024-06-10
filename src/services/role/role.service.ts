@@ -7,7 +7,7 @@ export class RoleService {
         let apiResponse: ApiResponse;
         try {
             apiResponse = await getData('roles')
-            console.log( "response de l appel api", apiResponse)
+            // console.log( "response de l appel api", apiResponse)
             return apiResponse
         } catch (error) {
             return {
@@ -22,7 +22,7 @@ export class RoleService {
     async addRole(data: any): Promise<ApiResponse> {
         try {
             const apiResponse = await postData('roleStore', data);
-            console.log("response de l'ajout de role", apiResponse);
+            // console.log("response de l'ajout de role", apiResponse);
             return apiResponse;
         } catch (error) {
             return {

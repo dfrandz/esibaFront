@@ -62,7 +62,7 @@ const Role = () => {
     mutationFn: (newData: RoleFormInputs) => state.roleStore.addRole(newData),
     onSuccess: () => {
       toast.success("Role ajouté avec succès");
-      queryClient.invalidateQueries({ queryKey: ["role"] });
+      // queryClient.invalidateQueries({ queryKey: ["role"] });
     },
     onError: () => {
       toast.error("Erreur lors de l'ajout du role");
@@ -84,8 +84,10 @@ const Role = () => {
     }
   });
 
-  const onSubmit = (data: RoleFormInputs) => {
-    addMutation.mutate(data);
+
+  const handleAddRole = () => {
+    // addMutation.mutate(data);
+    console.log("add role")
   };
 
   const handleDelete = (roleId: string) => {
@@ -140,7 +142,7 @@ const Role = () => {
         },
       }),
     ] as unknown as ColumnDef<any>[];
-  }, []);
+  },[]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([])
   const table = useReactTable({
@@ -267,7 +269,7 @@ const Role = () => {
           </div>
 
           <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(handleAddRole)}>
               <Card className="p-2">
                 <CardHeader>
                   <CardTitle>
@@ -291,13 +293,13 @@ const Role = () => {
                   </div>
                 </CardContent>
                 <CardFooter>
-
-                  <Button type="submit" size="sm" className="h-8 gap-1">
+                  <Button size="sm" className="h-8 gap-1">
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       Add Role
                     </span>
                   </Button>
+                  
                 </CardFooter>
               </Card>
             </form>

@@ -1,8 +1,8 @@
 export interface ApiResponse{
     success: boolean,
-    message: string,
+    message?: string,
     result: any,
     errors?: any,
-    except?: string | undefined,
-    status?: number| undefined
+    except?: string,
+    status?: number
   }

@@ -22,7 +22,8 @@ export interface ApiNetwork {
 
 export interface Role {
     id: number;
-    name: string;
+    libelle: string;
     description?: string;
     created_at: Date;
+    status: boolean;
 }
