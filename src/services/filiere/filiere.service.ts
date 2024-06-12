@@ -1,12 +1,13 @@
-import { ApiResponse } from "../../models/api-response";
-import { getData, postData, deleteData, postDataWithToken } from "../api/http-base.service";
+import { ApiResponse } from "@/models/api-response";
+import { deleteData, getData, postData, postDataWithToken } from "../api/http-base.service";
+import { FiliereDto } from "@/models";
 
-export class RoleService {
+export class FiliereService{
 
-    async getRoles(): Promise<ApiResponse>{
+    async getFilieres(): Promise<ApiResponse>{
         let apiResponse: ApiResponse;
         try {
-            apiResponse = await getData('roles')
+            apiResponse = await getData('filiere')
             // console.log( "response de l appel api", apiResponse)
             return apiResponse
         } catch (error) {
@@ -19,24 +20,25 @@ export class RoleService {
         }
     }
 
-    async addRole(data: any): Promise<ApiResponse> {
+    async addFiliere(data:any):Promise<ApiResponse> {
+        let apiResponse: ApiResponse;
         try {
-            const apiResponse = await postDataWithToken('roleStore', data);
-            // console.log("response de l'ajout de role", apiResponse);
-            return apiResponse;
+            apiResponse = await postData('filiere',data)
+            // console.log( "response de l appel api", apiResponse)
+            return apiResponse
         } catch (error) {
             return {
                 success: false,
-                message: 'Erreur lors de l\'ajout du role, veuillez réessayer plus tard',
+                message: 'Erreur de connexion veuillez réessayer plus tard',
                 result: null,
                 errors: "Erreur de connexion"
             };
         }
     }
 
-    async deleteRole(roleId: string): Promise<ApiResponse> {
+    async deleteFiliere(filiereId: string): Promise<ApiResponse> {
         try {
-            const apiResponse = await deleteData(`roleDelete/${roleId}`);
+            const apiResponse = await deleteData(`filiere/${filiereId}`);
             console.log("response de la suppression de role", apiResponse);
             return apiResponse;
         } catch (error) {
@@ -48,6 +50,4 @@ export class RoleService {
             };
         }
     }
-
-    
 }

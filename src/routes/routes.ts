@@ -4,6 +4,7 @@ import HomeLayout from "@/layouts/base";
 import Dashboard from "@/pages/Dashboard";
 import Home from "@/pages/Home";
 import Role from "@/pages/roles/Role";
+import Filiere from "@/pages/filiere/Filiere";
 
 export {
     HomeLayout,
@@ -12,4 +13,5 @@ export {
     Dashboard,
     Home,
     Role,
+    Filiere
 }

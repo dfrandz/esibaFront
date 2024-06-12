@@ -1,29 +1,21 @@
-import { RoleDto } from "@/models";
+import { FiliereDto } from "@/models";
 import { ApiResponse } from "@/models/api-response";
-import { RoleService } from "@/services/role/role.service";
+import { FiliereService } from "@/services/filiere/filiere.service";
 import { proxy } from "valtio";
 
-interface Role {
-    id: string;
-    libelle: string;
-    description: string;
-    status: boolean;
-    // add other properties of role here as needed
-}
 
-class RoleStore {
-    role: RoleDto[] = []
+class FiliereStore{
+    filieres:FiliereDto[] = []
+    filiereService = new FiliereService()
 
-    roleService = new RoleService()
-
-    async getRoles(): Promise<ApiResponse | undefined> {
+    async getFilieres(): Promise<ApiResponse | undefined> {
         try {
-            const response = await this.roleService.getRoles();
+            const response = await this.filiereService.getFilieres();
             if (response.status) {
                 console.log("response valtio role2", response.result)
                 const result = response.result;
-                this.role = result
-                console.log("this.role", this.role)
+                this.filieres = result
+                console.log("this.role", this.filieres)
                 return response
             }else{
                 return {
@@ -44,9 +36,9 @@ class RoleStore {
         }
     }
 
-    async addRole(data: any): Promise<ApiResponse | undefined> {
+    async addFiliere(data:any) : Promise<ApiResponse>{
         try {
-            const response = await this.roleService.addRole(data);
+            const response = await this.filiereService.addFiliere(data);
             return response
         } catch (error: any) {
             return {
@@ -58,13 +50,13 @@ class RoleStore {
         }
     }
 
-    async deleteRole(roleId: string): Promise<ApiResponse | undefined> {
+    async deleteFiliere(filiereId:any): Promise<ApiResponse>{
         try {
-            const response = await this.roleService.deleteRole(roleId);
+            const response = await this.filiereService.deleteFiliere(filiereId);
             if (response.success) {
                 console.log("response delete role", response)
                 // Filter out the deleted role from the local state
-                this.role = this.role.filter((role:any) => role.id !== roleId);
+                this.filieres = this.filieres.filter((filiere:any) => filiere.id !== filiereId);
                 return response;
             } else {
                 return {
@@ -85,6 +77,5 @@ class RoleStore {
     }
 }
 
-
-const  roleStore= proxy(new RoleStore());
-export default roleStore;
+const  filiereStore= proxy(new FiliereStore());
+export default filiereStore;

@@ -7,7 +7,7 @@ export interface User {
     nationalite: string;
     roleId: number;
     status?: string;
-    role?: Role;
+    role?: RoleDto;
     created_at?: Date;
     photoProfile: Blob;
 }
@@ -26,4 +26,15 @@ export interface RoleDto {
     description?: string;
     created_at: Date;
     status: boolean;
+}
+
+export interface Matiere{
+
+}
+
+export interface FiliereDto{
+    id: number;
+    libelle: string;
+    status: boolean;
+    description: string
 }

@@ -38,8 +38,9 @@ const Role = () => {
 
   const snap = useSnapshot(state)
   const queryClient = useQueryClient();
+  const [isupdating, setIsupdating] = useState<boolean>(false)
 
-  useQuery({
+  const {data:roles} = useQuery({
     queryKey: ["role"],
     queryFn: () => {
       return state.roleStore.getRoles()
@@ -57,20 +58,22 @@ const Role = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
+    setValue
   } = useForm<RoleFormInputs>({
     resolver: zodResolver(roleSchema),
   });
   
 
   const addMutation = useMutation({
+    mutationKey:['addrole'],
     mutationFn: (newData: RoleFormInputs) => state.roleStore.addRole(newData),
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Role ajouté avec succès");
       queryClient.invalidateQueries({ queryKey: ["role"] });
       reset()
     },
-    onError: () => {
+    onError: async () => {
       toast.error("Erreur lors de l'ajout du role");
     }
   });
@@ -78,16 +81,13 @@ const Role = () => {
   const deleteMutation = useMutation({
     mutationFn: (roleId: string) => state.roleStore.deleteRole(roleId),
     onSuccess: () => {
-      toast.success("Role supprimé avec succès");
+      // toast.success("Role supprimé avec succès");
       queryClient.invalidateQueries({ queryKey: ["role"] });
       // Mise à jour de l'état du cache après la suppression réussie
       queryClient.setQueryData(["role"], (oldData: any[]) => {
         return oldData.filter(role => role.id !== role); // Assurez-vous que 'id' est la clé correcte pour identifier un rôle
       });
     },
-    onError: () => {
-      toast.error("Erreur lors de la suppression du role");
-    }
   });
 
 
@@ -99,7 +99,15 @@ const Role = () => {
   const handleDelete = (roleId: string) => {
     deleteMutation.mutate(roleId);
   };
-      
+  
+  const update = (roleId:number) =>{
+    setIsupdating(true)
+    console.log('role to update', roleId)
+    const currentRole:RoleDto[] = roles?.result.filter((role:RoleDto) => role.id ==roleId)
+    console.log('role current', currentRole)
+    setValue("libelle", 'dona')
+    setValue("description", 'dona')
+  }
 
   const columns = useMemo(() => {
     const columnHelper = createColumnHelper<any>();
@@ -132,7 +140,7 @@ const Role = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => console.log(props.getValue())}
+                onClick={() => update(props.getValue())}
               >
                 Detail
               </Button>
@@ -152,7 +160,7 @@ const Role = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([])
   const table = useReactTable<RoleDto>({
-    data: snap.roleStore.role,
+    data: state.roleStore.role,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -171,15 +179,6 @@ const Role = () => {
       <div
         className="flex flex-1 py-2 justify-center rounded-lg border border-dashed shadow-sm"
       >
-        {/* <div className="flex flex-col items-center gap-1 text-center">
-                    <h3 className="text-2xl font-bold tracking-tight">
-                        You have no Roles
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                        You can start selling as soon as you add a product.
-                    </p>
-                    <Button className="mt-4">Add Roles</Button>
-                </div> */}
         <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
           <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
             <Card className="p-2">
@@ -187,7 +186,7 @@ const Role = () => {
                 <CardTitle>
                   Liste Roles
                 </CardTitle>
-                <CardDescription>Recent orders from your store.</CardDescription>
+                <CardDescription>Liste des roles</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="rounded-md border">
@@ -299,12 +298,24 @@ const Role = () => {
                       </div>
                     </CardContent>
                     <CardFooter>
-                      <Button type="submit" size="sm" className="h-8 gap-1">
-                        <PlusCircle className="h-3.5 w-3.5" />
-                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                          Add Role
-                        </span>
-                      </Button>
+                      {
+                        isupdating? 
+                        <>
+                          <Button type="submit" size="sm" className="h-8 gap-1">
+                            <PlusCircle className="h-3.5 w-3.5" />
+                            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                              Update Role
+                            </span>
+                          </Button>
+                        </> : <>
+                        <Button type="submit" size="sm" className="h-8 gap-1">
+                            <PlusCircle className="h-3.5 w-3.5" />
+                            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                              Add Role
+                            </span>
+                          </Button>
+                        </>
+                      }
                     </CardFooter>
                 </form>
               </Card>
