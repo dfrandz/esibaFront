@@ -25,7 +25,6 @@ import {
 } from "@tanstack/react-table"
 import { useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useSnapshot } from "valtio"
 import state from '../../valtio/store'
 import { z } from "zod"
 import { useForm } from "react-hook-form"
@@ -36,7 +35,6 @@ import { RoleDto } from "@/models"
 
 const Role = () => {
 
-  const snap = useSnapshot(state)
   const queryClient = useQueryClient();
   const [isupdating, setIsupdating] = useState<boolean>(false)
 

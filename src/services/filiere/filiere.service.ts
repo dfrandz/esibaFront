@@ -1,6 +1,5 @@
 import { ApiResponse } from "@/models/api-response";
-import { deleteData, getData, postData, postDataWithToken } from "../api/http-base.service";
-import { FiliereDto } from "@/models";
+import { deleteData, getData, postData } from "../api/http-base.service";
 
 export class FiliereService{
 

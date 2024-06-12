@@ -2,15 +2,6 @@ import { RoleDto } from "@/models";
 import { ApiResponse } from "@/models/api-response";
 import { RoleService } from "@/services/role/role.service";
 import { proxy } from "valtio";
-
-interface Role {
-    id: string;
-    libelle: string;
-    description: string;
-    status: boolean;
-    // add other properties of role here as needed
-}
-
 class RoleStore {
     role: RoleDto[] = []
 

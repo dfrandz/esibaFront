@@ -3,22 +3,13 @@ import {
   Bell,
   CircleUser,
   Home,
-  LineChart,
-  Mail,
   Menu,
-  MessageSquare,
   Package,
-  Package2,
-  Plus,
   PlusCircle,
   Search,
   Settings,
-  ShoppingCart,
-  UserPlus,
   Users,
 } from "lucide-react"
-
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -30,15 +21,9 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -49,7 +34,7 @@ import {
 } from "@/components/ui/accordion"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom"
+import { Link, NavLink, Outlet } from "react-router-dom"
 import { ModeToggle } from "@/components/mode-toggle"
 import state from '../../valtio/store';
 import toast from "react-hot-toast"
@@ -58,7 +43,6 @@ import { useSnapshot } from "valtio"
 export default function HomeLayout() {
   const snap = useSnapshot(state)
   const user = snap.userStore.user
-  const navigate = useNavigate()
   const handleLogout = () => {
 
     state.userStore.logout().then((res) => {
