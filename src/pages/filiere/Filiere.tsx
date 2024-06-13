@@ -24,6 +24,7 @@ import {
     getFilteredRowModel,
     SortingState,
     getSortedRowModel,
+    getPaginationRowModel,
 } from "@tanstack/react-table"
 import { useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -111,6 +112,10 @@ const Filiere = () => {
     const onSubmit = (data: FiliereFormInputs) => {
         addMutation.mutate(data)
     };
+    const [pagination, setPagination] = useState({
+        pageIndex: 0, //initial page index
+        pageSize: 2, //default page size
+    });
 
     const columns = useMemo(() => {
         const columnHelper = createColumnHelper<any>();
@@ -170,10 +175,14 @@ const Filiere = () => {
         getFilteredRowModel: getFilteredRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        onPaginationChange: setPagination,
         state: {
             sorting,
             columnFilters,
+            pagination,
         },
+        
     });
     return (
         <>
