@@ -1,4 +1,4 @@
-import logo from '/assets/images/95.jpg';
+import logo from '/assets/images/load.png';
 import '../index.css';
 
 function Loading({ isLoading, children }: any) {
@@ -8,7 +8,7 @@ function Loading({ isLoading, children }: any) {
         isLoading ?
           <div className="mx-auto max-w-2xl md:text-center">
             <div className="flex items-center justify-center h-screen">
-              <img src={logo} width={"20%"} height={"100vh"} alt="Logo" className="animate-bounce text-center max-w-full h-auto transition-all ease-in-out" />
+              <img src={logo} width={"20%"} height={"100vh"} alt="Logo" className="animate-bounce rounded-lg text-center max-w-full h-auto transition-all ease-in-out" />
             </div>
           </div>
           :
