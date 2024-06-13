@@ -22,6 +22,7 @@ import {
   getFilteredRowModel,
   SortingState,
   getSortedRowModel,
+  getPaginationRowModel,
 } from "@tanstack/react-table"
 import { useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -37,7 +38,10 @@ const Role = () => {
 
   const queryClient = useQueryClient();
   const [isupdating, setIsupdating] = useState<boolean>(false)
-
+  const [pagination, setPagination] = useState({
+    pageIndex: 0, //initial page index
+    pageSize: 2, //default page size
+  });
   const {data:roles} = useQuery({
     queryKey: ["role"],
     queryFn: () => {
@@ -165,9 +169,12 @@ const Role = () => {
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
     state: {
       sorting,
       columnFilters,
+      pagination,
     },
   });
 
