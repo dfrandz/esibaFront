@@ -158,7 +158,7 @@ const Role = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([])
   const table = useReactTable<RoleDto>({
-    data: state.roleStore.role,
+    data: state.roleStore.role ?? [],
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -211,7 +211,7 @@ const Role = () => {
 
 
                     <TableBody>
-                      {table.getRowModel().rows?.length ? (
+                      {table.getRowModel().rows?.length > 0 ? (
                         table.getRowModel()?.rows.map((row) => (
                           <TableRow
                             key={row.id}

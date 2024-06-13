@@ -163,7 +163,7 @@ const Filiere = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [sorting, setSorting] = useState<SortingState>([])
     const table = useReactTable<FiliereDto>({
-        data: state.filiereStore.filieres,
+        data: state.filiereStore.filieres ?? [],
         columns: columns,
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
