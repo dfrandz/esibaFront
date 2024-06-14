@@ -33,8 +33,16 @@ export interface Matiere{
 }
 
 export interface FiliereDto{
-    id: number;
+    id: string;
     libelle: string;
     status: boolean;
     description: string
+}
+
+export interface NiveauFiliere{
+    id: number;
+    libelle: string;
+    status: boolean;
+    description: string;
+    filiere: FiliereDto;
 }

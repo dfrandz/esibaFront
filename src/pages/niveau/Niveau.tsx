@@ -1,19 +1,10 @@
-
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@radix-ui/react-label"
-import { PlusCircle } from "lucide-react"
-
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { useSnapshot } from "valtio";
+import state from '../../valtio/store'
+import { z } from "zod";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
     ColumnDef,
     createColumnHelper,
@@ -26,82 +17,74 @@ import {
     getSortedRowModel,
     getPaginationRowModel,
 } from "@tanstack/react-table"
-import { useMemo, useState } from "react"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useSnapshot } from "valtio"
-import state from '../../valtio/store'
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Textarea } from "@/components/ui/textarea"
-import toast from "react-hot-toast"
-import { FiliereDto} from "@/models"
-
-const Filiere = () => {
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@radix-ui/react-label"
+import { PlusCircle } from "lucide-react"
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import { FiliereDto, NiveauFiliere } from "@/models";
+import { Textarea } from "@/components/ui/textarea";
+import toast from "react-hot-toast";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectValue } from "@/components/ui/select";
+import { SelectTrigger } from "@radix-ui/react-select";
+const Niveau = () => {
     const snap = useSnapshot(state)
     const queryClient = useQueryClient();
     const [isupdating, setIsupdating] = useState<boolean>(false)
 
     useQuery({
+        queryKey: ["NiveauFiliere"],
+        queryFn: () => {
+            return state.niveauFiliereStore.getAll()
+        }
+    })
+
+    const { data: filieres } = useQuery({
         queryKey: ["filieres"],
         queryFn: () => {
             return state.filiereStore.getFilieres()
         }
     })
+    console.log('filieres liste: ', filieres)
+    const [pagination, setPagination] = useState({
+        pageIndex: 0, //initial page index
+        pageSize: 2, //default page size
+    });
 
-    const filiereSchema = z.object({
+    const niveauSchema = z.object({
         libelle: z.string().min(3, "Le libelle obligatoire"),
-        description: z.string().min(4, "La description est obligatoire"),
-        user_id: z.number().default(snap.userStore.user.id),
+        description: z.string().min(4, "La desc est obligatoire"),
+        filiere_id: z.string().nonempty("La filière est requise"),
         status: z.boolean().default(true)
     });
 
-    type FiliereFormInputs = z.infer<typeof filiereSchema>;
+    type NiveauFiliereFormInputs = z.infer<typeof niveauSchema>;
 
     const {
         register,
         handleSubmit,
         formState: { errors },
         reset,
-        setValue
-    } = useForm<FiliereFormInputs>({
-        resolver: zodResolver(filiereSchema),
+        setValue,
+        control
+    } = useForm<NiveauFiliereFormInputs>({
+        resolver: zodResolver(niveauSchema),
     });
 
-    const deleteMutation = useMutation({
-        mutationFn: (filiereId: string) => state.filiereStore.deleteFiliere(filiereId),
-        onSuccess: () => {
-          toast.success("Filiere supprimée avec succès");
-          queryClient.invalidateQueries({ queryKey: ["filieres"] });
-          // Mise à jour de l'état du cache après la suppression réussie
-          queryClient.setQueryData(["filieres"], (oldData: any[]) => {
-            return oldData.filter(filiere => filiere.id !== filiere); // Assurez-vous que 'id' est la clé correcte pour identifier un rôle
-          });
-        },
-    });
-
-    const handleDelete = (filiereId: string) => {
-        deleteMutation.mutate(filiereId)
-    };
-
-    const update = () => {
-        setIsupdating(true)
-        setValue("libelle", 'dona')
-        setValue("description", 'dona')
-    }
-
-    const handleCancel = () => {
-        setIsupdating(false)
-        setValue("description", "")
-        setValue("libelle", '')
-    }
-
-    const addMutation=useMutation({
-        mutationKey: ['addFiliere'],
-        mutationFn: (newFiliere: FiliereFormInputs) => state.filiereStore.addFiliere(newFiliere),
+    const addMutation = useMutation({
+        mutationKey: ['addNiveau'],
+        mutationFn: (newFiliere: NiveauFiliereFormInputs) => state.niveauFiliereStore.add(newFiliere),
         onSuccess: async () => {
-            toast.success("Filiere ajouté avec succès");
-            queryClient.invalidateQueries({ queryKey: ["filieres"] });
+            toast.success("NiveauFiliere ajouté avec succès");
+            queryClient.invalidateQueries({ queryKey: ["NiveauFiliere"] });
             reset()
         },
         onError: async () => {
@@ -109,13 +92,11 @@ const Filiere = () => {
         }
     });
 
-    const onSubmit = (data: FiliereFormInputs) => {
-        addMutation.mutate(data)
+    const onSubmit = (data: NiveauFiliereFormInputs) => {
+        console.log("data: ", data)
+        // addMutation.mutate(data)
     };
-    const [pagination, setPagination] = useState({
-        pageIndex: 0, //initial page index
-        pageSize: 2, //default page size
-    });
+
 
     const columns = useMemo(() => {
         const columnHelper = createColumnHelper<any>();
@@ -131,9 +112,9 @@ const Filiere = () => {
             columnHelper.accessor("description", {
                 header: "description",
                 cell: ({ row }) => (
-                  <div className="capitalize">{row.getValue("description")}</div>
+                    <div className="capitalize">{row.getValue("description")}</div>
                 ),
-              }),
+            }),
             columnHelper.accessor("status", {
                 header: "status",
                 cell: ({ }) => (
@@ -148,14 +129,14 @@ const Filiere = () => {
                             <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => update()}
+
                             >
                                 Update
                             </Button>
                             <Button
                                 variant="destructive"
                                 size="sm"
-                                onClick={() => handleDelete(props.getValue())}
+
                             >
                                 Supp
                             </Button>
@@ -163,12 +144,12 @@ const Filiere = () => {
                     );
                 },
             }),
-        ] as unknown as ColumnDef<FiliereDto>[];
+        ] as unknown as ColumnDef<NiveauFiliere>[];
     }, []);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [sorting, setSorting] = useState<SortingState>([])
-    const table = useReactTable<FiliereDto>({
-        data: state.filiereStore.filieres ?? [],
+    const table = useReactTable<NiveauFiliere>({
+        data: state.niveauFiliereStore.niveauFilieres ?? [],
         columns: columns,
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
@@ -182,12 +163,12 @@ const Filiere = () => {
             columnFilters,
             pagination,
         },
-        
+
     });
-    
+
     return (
         <>
-            <div>Filiere</div>
+            <div>Niveau</div>
             <div
                 className="flex flex-1 py-2 justify-center rounded-lg border border-dashed shadow-sm"
             >
@@ -196,7 +177,7 @@ const Filiere = () => {
                         <Card className="p-2">
                             <CardHeader>
                                 <CardTitle>
-                                    Liste Filiere
+                                    Niveau Filiere
                                 </CardTitle>
                                 <CardDescription>Liste de vos filieres.</CardDescription>
                             </CardHeader>
@@ -292,25 +273,73 @@ const Filiere = () => {
                                     {
                                         isupdating ? <>
                                             <CardTitle>
-                                                Update une Filiere
+                                                Update niveau
                                             </CardTitle>
                                         </>
                                             :
                                             <>
                                                 <CardTitle>
-                                                    Ajouter une Filiere
+                                                    Ajouter un Niveau
                                                 </CardTitle>
                                             </>
                                     }
                                 </CardHeader>
                                 <CardContent>
                                     <div className="grid w-full max-w-sm items-center gap-1.5 my-1">
-                                        <Label htmlFor="libelle">Filiere</Label>
-                                        <Input type="text" placeholder="filiere name" {...register("libelle")} />
+                                        <Label htmlFor="libelle">Niveau</Label>
+                                        <Input type="text" placeholder="libelle" {...register("libelle")} />
                                         {errors.libelle && (
                                             <p className="text-red-500 text-sm">{errors.libelle.message}</p>
                                         )}
                                     </div>
+
+                                    {/* <div className="grid w-full max-w-sm items-center gap-1.5 my-1">
+                                        <Label htmlFor="description">Filiere</Label>
+                                        <Select {...register("filiere_id")}>
+                                            <SelectTrigger className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                                <SelectValue placeholder="Select filiere" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {filieres?.map((filiere: FiliereDto) => (
+                                                    <SelectItem key={filiere.id} value={filiere.libelle}>
+                                                        {filiere.libelle}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                            {errors.filiere_id && (
+                                                <p className="text-red-500 text-sm">{errors.filiere_id.message}</p>
+                                            )}
+                                        </Select>
+                                    </div> */}
+
+                                    <div className="grid w-full max-w-sm items-center gap-1.5 my-1">
+                                        <Label htmlFor="description">Filiere</Label>
+                                        <Controller
+                                            control={control}
+                                            rules={{
+                                                required: true,
+                                                }}
+                                            name="filiere_id"
+                                            render={({ field }) => (
+                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                    <SelectTrigger className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                                                        <SelectValue placeholder="Select filiere" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {filieres?.map((filiere: FiliereDto) => (
+                                                            <SelectItem key={filiere.id} value={filiere.libelle}>
+                                                                {filiere.libelle}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            )}
+                                            />
+                                            {errors.filiere_id && <p>{errors.filiere_id.message}</p>}
+                                    </div>
+
+
+
                                     <div className="grid w-full max-w-sm items-center gap-1.5 my-1">
                                         <Label htmlFor="description">Description</Label>
                                         <Textarea placeholder="description" {...register("description")} />
@@ -327,11 +356,11 @@ const Filiere = () => {
                                                     <Button type="submit" size="sm" className="h-8 gap-1">
                                                         <PlusCircle className="h-3.5 w-3.5" />
                                                         <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                                                            Update Filiere
+                                                            Update niveau
                                                         </span>
                                                     </Button>
 
-                                                    <Button type="submit" size="sm" className="h-8 gap-1" onClick={() => handleCancel()}>
+                                                    <Button type="submit" size="sm" className="h-8 gap-1">
                                                         {/* <PlusCircle className="h-3.5 w-3.5" /> */}
                                                         <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                                                             Cancel update
@@ -342,7 +371,7 @@ const Filiere = () => {
                                                 <Button type="submit" size="sm" className="h-8 gap-1">
                                                     <PlusCircle className="h-3.5 w-3.5" />
                                                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                                                        Add Filiere
+                                                        Add niveau
                                                     </span>
                                                 </Button>
                                             </>
@@ -357,4 +386,4 @@ const Filiere = () => {
     )
 }
 
-export default Filiere
+export default Niveau

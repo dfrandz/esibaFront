@@ -8,7 +8,7 @@ class FiliereStore{
     filieres:FiliereDto[] = []
     filiereService = new FiliereService()
 
-    async getFilieres(): Promise<ApiResponse | undefined> {
+    async getFilieres() {
         try {
             const response = await this.filiereService.getFilieres();
             if (response.status) {
@@ -16,7 +16,7 @@ class FiliereStore{
                 const result = response.result;
                 this.filieres = result
                 console.log("this.role", this.filieres)
-                return response
+                return response.result
             }else{
                 return {
                     success: false,
