@@ -40,12 +40,14 @@ const Niveau = () => {
     const queryClient = useQueryClient();
     const [isupdating, setIsupdating] = useState<boolean>(false)
 
-    useQuery({
+    const {data:niveau} =useQuery({
         queryKey: ["NiveauFiliere"],
         queryFn: () => {
             return state.niveauFiliereStore.getAll()
         }
     })
+
+    console.log("liste des niveau:", niveau)
 
     const { data: filieres } = useQuery({
         queryKey: ["filieres"],
@@ -56,7 +58,7 @@ const Niveau = () => {
     console.log('filieres liste: ', filieres)
     const [pagination, setPagination] = useState({
         pageIndex: 0, //initial page index
-        pageSize: 2, //default page size
+        pageSize: 4, //default page size
     });
 
     const niveauSchema = z.object({
@@ -94,7 +96,7 @@ const Niveau = () => {
 
     const onSubmit = (data: NiveauFiliereFormInputs) => {
         console.log("data: ", data)
-        // addMutation.mutate(data)
+        addMutation.mutate(data)
     };
 
 
@@ -109,10 +111,10 @@ const Niveau = () => {
                     </div>
                 ),
             }),
-            columnHelper.accessor("description", {
-                header: "description",
+            columnHelper.accessor("filiereId", {
+                header: "filiere",
                 cell: ({ row }) => (
-                    <div className="capitalize">{row.getValue("description")}</div>
+                    <div className="capitalize">{row.getValue("filiereId")}</div>
                 ),
             }),
             columnHelper.accessor("status", {
@@ -293,32 +295,10 @@ const Niveau = () => {
                                         )}
                                     </div>
 
-                                    {/* <div className="grid w-full max-w-sm items-center gap-1.5 my-1">
-                                        <Label htmlFor="description">Filiere</Label>
-                                        <Select {...register("filiere_id")}>
-                                            <SelectTrigger className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
-                                                <SelectValue placeholder="Select filiere" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {filieres?.map((filiere: FiliereDto) => (
-                                                    <SelectItem key={filiere.id} value={filiere.libelle}>
-                                                        {filiere.libelle}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                            {errors.filiere_id && (
-                                                <p className="text-red-500 text-sm">{errors.filiere_id.message}</p>
-                                            )}
-                                        </Select>
-                                    </div> */}
-
                                     <div className="grid w-full max-w-sm items-center gap-1.5 my-1">
                                         <Label htmlFor="description">Filiere</Label>
                                         <Controller
                                             control={control}
-                                            rules={{
-                                                required: true,
-                                                }}
                                             name="filiere_id"
                                             render={({ field }) => (
                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -326,11 +306,20 @@ const Niveau = () => {
                                                         <SelectValue placeholder="Select filiere" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        {filieres?.map((filiere: FiliereDto) => (
-                                                            <SelectItem key={filiere.id} value={filiere.libelle}>
-                                                                {filiere.libelle}
-                                                            </SelectItem>
-                                                        ))}
+                                                        {
+                                                            filieres?.lenght ? (
+                                                                <p>pas de resultat</p>
+
+                                                            ) : (
+                                                                filieres?.map((filiere: FiliereDto) => (
+                                                                    <SelectItem key={filiere.id} value={filiere.id}>
+                                                                        {filiere.libelle}
+                                                                    </SelectItem>
+                                                                ))
+                                                                
+                                                            )
+                                                        
+                                                        }
                                                     </SelectContent>
                                                 </Select>
                                             )}
@@ -344,7 +333,7 @@ const Niveau = () => {
                                         <Label htmlFor="description">Description</Label>
                                         <Textarea placeholder="description" {...register("description")} />
                                         {errors.description && (
-                                            <p className="text-red-500 text-sm">{errors.description.message}</p>
+                                            <p className="text-red-500 text-sm">{errors.description.message} dona</p>
                                         )}
                                     </div>
                                 </CardContent>

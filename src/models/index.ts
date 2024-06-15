@@ -44,5 +44,5 @@ export interface NiveauFiliere{
     libelle: string;
     status: boolean;
     description: string;
-    filiere: FiliereDto;
+    filiereId: FiliereDto;
 }
