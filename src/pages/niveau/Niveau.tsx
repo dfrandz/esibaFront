@@ -35,19 +35,18 @@ import { Textarea } from "@/components/ui/textarea";
 import toast from "react-hot-toast";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectValue } from "@/components/ui/select";
 import { SelectTrigger } from "@radix-ui/react-select";
+import { getFiliereName } from "@/utils/utils";
 const Niveau = () => {
     const snap = useSnapshot(state)
     const queryClient = useQueryClient();
     const [isupdating, setIsupdating] = useState<boolean>(false)
 
-    const {data:niveau} =useQuery({
+    useQuery({
         queryKey: ["NiveauFiliere"],
         queryFn: () => {
             return state.niveauFiliereStore.getAll()
         }
     })
-
-    console.log("liste des niveau:", niveau)
 
     const { data: filieres } = useQuery({
         queryKey: ["filieres"],
@@ -104,7 +103,7 @@ const Niveau = () => {
         const columnHelper = createColumnHelper<any>();
         return [
             columnHelper.accessor("libelle", {
-                header: "libelle",
+                header: "niveau",
                 cell: ({ row }) => (
                     <div className="capitalize">
                         <div className="capitalize">{row.getValue("libelle")}</div>
@@ -114,7 +113,7 @@ const Niveau = () => {
             columnHelper.accessor("filiereId", {
                 header: "filiere",
                 cell: ({ row }) => (
-                    <div className="capitalize">{row.getValue("filiereId")}</div>
+                    <div className="capitalize">{getFiliereName(filieres||[], row.getValue("filiereId"))}</div>
                 ),
             }),
             columnHelper.accessor("status", {
