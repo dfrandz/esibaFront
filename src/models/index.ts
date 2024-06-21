@@ -1,15 +1,16 @@
 export interface User {
-    id: number;
+    id: string;
     nom: string;
     prenom: string;
     email: string;
     domaine: string;
     nationalite: string;
-    roleId: number;
+    roleId: string;
     status?: string;
-    role?: RoleDto;
+    // role?: RoleDto;
     created_at?: Date;
     photoProfile: Blob;
+    password:string
 }
 
 export interface ApiNetwork {
@@ -21,7 +22,7 @@ export interface ApiNetwork {
 }
 
 export interface RoleDto {
-    id: number;
+    id: string;
     libelle: string;
     description?: string;
     created_at: Date;
@@ -45,4 +46,20 @@ export interface NiveauFiliere{
     status: boolean;
     description: string;
     filiereId: FiliereDto;
+}
+
+export interface MatiereModel{
+    id: string;
+    libelle: string;
+    status: boolean;
+    description: string
+}
+
+export interface AuthModel{
+    user?: User;
+    access_token?: any
+}
+
+export interface TokenModel{
+
 }

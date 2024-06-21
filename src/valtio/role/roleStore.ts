@@ -7,49 +7,35 @@ class RoleStore {
 
     roleService = new RoleService()
 
-    async getRoles(): Promise<ApiResponse | undefined> {
+    async getRoles(){
+        let response: ApiResponse<RoleDto[]>
         try {
-            const response = await this.roleService.getRoles();
+            response = await this.roleService.getRoles();
             if (response.status) {
                 console.log("response valtio role2", response.result)
                 const result = response.result;
-                this.role = result
+                this.role = result ? result : []
                 console.log("this.role", this.role)
-                return response
+                return response.result
             }else{
-                return {
-                    success: false,
-                    message: response?.message,
-                    result: [],
-                    errors: response?.errors
-                };
+                return response.result
             }
-        } catch (error: any) {
-            return {
-                success: false,
-                message: 'Erreur de connexion',
-                result: [],
-                errors: error,
-            };
-
+        } catch (error) {
+            return []
         }
     }
 
-    async addRole(data: any): Promise<ApiResponse | undefined> {
+    async addRole(data: any){
+        let response: ApiResponse<RoleDto>;
         try {
-            const response = await this.roleService.addRole(data);
-            return response
+            response = await this.roleService.addRole(data);
+            return response.result
         } catch (error: any) {
-            return {
-                success: false,
-                message: 'Erreur de connexion',
-                result: [],
-                errors: error,
-            };
+            return []
         }
     }
 
-    async deleteRole(roleId: string): Promise<ApiResponse | undefined> {
+    async deleteRole(roleId: string) {
         try {
             const response = await this.roleService.deleteRole(roleId);
             if (response.success) {

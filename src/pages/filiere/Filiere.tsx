@@ -52,7 +52,7 @@ const Filiere = () => {
     const filiereSchema = z.object({
         libelle: z.string().min(3, "Le libelle obligatoire"),
         description: z.string().min(4, "La description est obligatoire"),
-        user_id: z.number().default(snap.userStore.user.id),
+        user_id: z.string().default(snap.userStore.user.id),
         status: z.boolean().default(true)
     });
 
@@ -110,6 +110,7 @@ const Filiere = () => {
     });
 
     const onSubmit = (data: FiliereFormInputs) => {
+        console.log("form", data)
         addMutation.mutate(data)
     };
     const [pagination, setPagination] = useState({

@@ -44,9 +44,7 @@ const Role = () => {
   });
   const {data:roles} = useQuery({
     queryKey: ["role"],
-    queryFn: () => {
-      return state.roleStore.getRoles()
-    }
+    queryFn: () => state.roleStore.getRoles(),
   })
 
   const roleSchema = z.object({
@@ -102,10 +100,10 @@ const Role = () => {
     deleteMutation.mutate(roleId);
   };
   
-  const update = (roleId:number) =>{
+  const update = (roleId:string) =>{
     setIsupdating(true)
     console.log('role to update', roleId)
-    const currentRole:RoleDto[] = roles?.result.filter((role:RoleDto) => role.id ==roleId)
+    const currentRole = roles?.filter((role:RoleDto) => role.id ==roleId)
     console.log('role current', currentRole)
     setValue("libelle", 'dona')
     setValue("description", 'dona')

@@ -9,19 +9,19 @@ class FiliereStore{
     filiereService = new FiliereService()
 
     async getFilieres() {
+        let response: ApiResponse<FiliereDto[]>
         try {
-            const response = await this.filiereService.getFilieres();
+            response = await this.filiereService.getFilieres();
             if (response.status) {
                 console.log("response valtio role2", response.result)
-                const result = response.result;
-                this.filieres = result
+                const result = response?.result;
+                this.filieres = result ? result : []
                 console.log("this.role", this.filieres)
-                return response.result
+                return response
             }else{
                 return {
                     success: false,
                     message: response?.message,
-                    result: [],
                     errors: response?.errors
                 };
             }
@@ -29,30 +29,30 @@ class FiliereStore{
             return {
                 success: false,
                 message: 'Erreur de connexion',
-                result: [],
                 errors: error,
             };
 
         }
     }
 
-    async addFiliere(data:any) : Promise<ApiResponse>{
+    async addFiliere(data:any){
+        let response: ApiResponse<FiliereDto>
         try {
-            const response = await this.filiereService.addFiliere(data);
+            response = await this.filiereService.addFiliere(data);
             return response
         } catch (error: any) {
             return {
                 success: false,
                 message: 'Erreur de connexion',
-                result: [],
                 errors: error,
             };
         }
     }
 
-    async deleteFiliere(filiereId:any): Promise<ApiResponse>{
+    async deleteFiliere(filiereId:any){
+        let response: ApiResponse<FiliereDto>
         try {
-            const response = await this.filiereService.deleteFiliere(filiereId);
+            response = await this.filiereService.deleteFiliere(filiereId);
             if (response.success) {
                 console.log("response delete role", response)
                 // Filter out the deleted role from the local state
@@ -62,7 +62,6 @@ class FiliereStore{
                 return {
                     success: false,
                     message: response?.message,
-                    result: [],
                     errors: response?.errors
                 };
             }
@@ -70,7 +69,6 @@ class FiliereStore{
             return {
                 success: false,
                 message: 'Erreur de connexion',
-                result: [],
                 errors: error,
             };
         }

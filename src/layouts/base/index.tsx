@@ -39,12 +39,21 @@ import { ModeToggle } from "@/components/mode-toggle"
 import state from '../../valtio/store';
 import toast from "react-hot-toast"
 import { useSnapshot } from "valtio"
+import { useQuery } from "@tanstack/react-query"
+import { getRoleName } from "@/utils/utils"
 
 export default function HomeLayout() {
   const snap = useSnapshot(state)
   const user = snap.userStore.user
-  const handleLogout = () => {
 
+  const {data:roles} = useQuery({
+    queryKey: ["role"],
+    queryFn: () => {
+      return state.roleStore.getRoles()
+    }
+  })
+
+  const handleLogout = () => {
     state.userStore.logout().then((res) => {
       console.log("logout ", res)
       if (res) {
@@ -57,6 +66,7 @@ export default function HomeLayout() {
     })
   }
 
+  console.log('roles:', roles)
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
 
@@ -75,7 +85,7 @@ export default function HomeLayout() {
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
               {
-                user.roleId === 1 && (
+                getRoleName( roles||[] ,user.roleId) === "Admin" &&  (
                   <>
                     <NavLink
                       to="/"

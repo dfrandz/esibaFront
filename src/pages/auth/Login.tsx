@@ -40,6 +40,7 @@ const Login = () => {
       }else{
         setLoading(false)
         toast.error(res.message)
+
       }
     }).catch((error)=>{
       setLoading(false)

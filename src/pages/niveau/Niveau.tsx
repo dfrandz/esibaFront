@@ -41,20 +41,19 @@ const Niveau = () => {
     const queryClient = useQueryClient();
     const [isupdating, setIsupdating] = useState<boolean>(false)
 
-    useQuery({
-        queryKey: ["NiveauFiliere"],
-        queryFn: () => {
-            return state.niveauFiliereStore.getAll()
-        }
-    })
-
-    const { data: filieres } = useQuery({
+    const { data: filieres } = useQuery<any>({
         queryKey: ["filieres"],
         queryFn: () => {
             return state.filiereStore.getFilieres()
         }
     })
-    console.log('filieres liste: ', filieres)
+    const {data:niveaux} =useQuery({
+        queryKey: ["NiveauFiliere"],
+        queryFn: () => {
+            return state.niveauFiliereStore.getAll()
+        }
+    })
+    
     const [pagination, setPagination] = useState({
         pageIndex: 0, //initial page index
         pageSize: 4, //default page size
@@ -113,7 +112,7 @@ const Niveau = () => {
             columnHelper.accessor("filiereId", {
                 header: "filiere",
                 cell: ({ row }) => (
-                    <div className="capitalize">{getFiliereName(filieres||[], row.getValue("filiereId"))}</div>
+                    <div className="capitalize">{getFiliereName(filieres?.result || [] , row.getValue("filiereId"))}</div>
                 ),
             }),
             columnHelper.accessor("status", {
@@ -150,7 +149,7 @@ const Niveau = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [sorting, setSorting] = useState<SortingState>([])
     const table = useReactTable<NiveauFiliere>({
-        data: state.niveauFiliereStore.niveauFilieres ?? [],
+        data: state.niveauFiliereStore.niveauFilieres,
         columns: columns,
         getCoreRowModel: getCoreRowModel(),
         onColumnFiltersChange: setColumnFilters,
@@ -306,16 +305,16 @@ const Niveau = () => {
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {
-                                                            filieres?.lenght ? (
-                                                                <p>pas de resultat</p>
-
-                                                            ) : (
-                                                                filieres?.map((filiere: FiliereDto) => (
+                                                            filieres?.result.length ? (
+                                                                filieres?.result?.map((filiere: FiliereDto) => (
                                                                     <SelectItem key={filiere.id} value={filiere.id}>
                                                                         {filiere.libelle}
                                                                     </SelectItem>
                                                                 ))
+
+                                                            ) : (
                                                                 
+                                                                <p>pas de resultat</p>
                                                             )
                                                         
                                                         }

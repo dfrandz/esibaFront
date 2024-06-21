@@ -8,12 +8,13 @@ class NiveauStore{
 
     niveauFiliererService = new NiveauFiliereService()
 
-    async getAll(): Promise<ApiResponse | undefined>{
+    async getAll(){
+        let response: ApiResponse<NiveauFiliere[]>
         try {
-            const response = await this.niveauFiliererService.getFilieres();
+            response = await this.niveauFiliererService.getFilieres();
             if (response.status) {
                 const result = response.result;
-                this.niveauFilieres = result
+                this.niveauFilieres = result ? result : [];
                 return response
             }else{
                 return {
@@ -34,15 +35,15 @@ class NiveauStore{
         }
     }
 
-    async add(data:any) : Promise<ApiResponse>{
+    async add(data:any){
+        let response: ApiResponse<NiveauFiliere>;
         try {
-            const response = await this.niveauFiliererService.add(data);
+            response = await this.niveauFiliererService.add(data);
             return response
         } catch (error: any) {
             return {
                 success: false,
                 message: 'Erreur de connexion',
-                result: [],
                 errors: error,
             };
         }

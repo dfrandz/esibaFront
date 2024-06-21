@@ -1,5 +1,5 @@
 import { convertToTime } from "@/helpers/myfunc";
-import { User } from "@/models";
+import { AuthModel, User } from "@/models";
 import { ApiResponse } from "@/models/api-response";
 import { AuthService } from "@/services/auth/auth.service";
 import { proxy } from "valtio";
@@ -33,7 +33,7 @@ class UserStore {
         // this.logout = this.logout.bind(this);
     }
 
-    private setAuthState(user: User, token: string): void {
+    private setAuthState(user: any, token: string): void {
         this.isAuthenticated = true;
         this.user = user;
         this.token = token;
@@ -42,11 +42,14 @@ class UserStore {
         localStorage.setItem('authStoreState',JSON.stringify(this));
     }
 
-    async login(loginDto: any): Promise<ApiResponse | undefined> {
+    async login(loginDto: any) {
+        let response: ApiResponse<AuthModel>
         try {
-            const response = await this.authService.login(loginDto);
+            response = await this.authService.login(loginDto);
             if (response?.success && response.result && !Array.isArray(response.result)) {
-                const result = response.result as LoginResult;
+                const result = response.result;
+                console.log('valtio auth res', result.access_token)
+                // const { email, ...filteredData } = result.user
                 this.setAuthState(result.user, result.access_token.token)
                 // this.user = result.user;
                 // this.token = result.access_token.token;
@@ -60,25 +63,24 @@ class UserStore {
                 return {
                     success: false,
                     message: response?.message,
-                    result: [],
+                    result: response.result,
                     errors: response?.errors
                 };
             }
         } catch (error: any) {
             return {
-
                 success: false,
                 message: 'Erreur de connexion',
-                result: [],
                 errors: error,
             };
 
         }
     }
     
-    async logout():Promise<ApiResponse | undefined> {
+    async logout() {
+        let response: ApiResponse<AuthModel>
         try {
-            const response = await this.authService.logout();
+            response = await this.authService.logout();
             if (response?.success) {
                 this.isAuthenticated = false;
                 this.user = {} as User;
@@ -92,7 +94,6 @@ class UserStore {
                 return {
                     success: false,
                     message: response?.message,
-                    result: [],
                     errors: response?.errors
                 };
             }
@@ -100,7 +101,6 @@ class UserStore {
             return {
                 success: false,
                 message: 'Erreur de connexion',
-                result: [],
                 errors: error,
             };
 
